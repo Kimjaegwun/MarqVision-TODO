@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import styles from "./page.module.css";
+import Input from "@/components/input";
+import TodoList from "@/components/list";
 
 export default function Home() {
   const [tasks, setTasks] = useState<string[]>([]);
@@ -15,18 +17,8 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <h1>Marq Todo</h1>
-      <div className={styles["input-wrapper"]}>
-          <input
-            className={styles.input}
-            type="text"
-            placeholder="Add a new task"
-            value={task}
-            onChange={(e) => setTask(e.target.value)}
-          />
-          <button className={styles.button} onClick={handleAddTask}>
-            Add
-          </button>
-      </div>
+      <Input task={task} setTask={setTask} handleAddTask={handleAddTask} />
+      <TodoList tasks={tasks} />
     </div>
   );
 }
