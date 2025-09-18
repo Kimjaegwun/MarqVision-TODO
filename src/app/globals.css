@@ -1,5 +1,7 @@
 :root {
   --background: #ffffff;
+  --border: #ccc;
+  --button: #b0b0b0;
 }
 
 html,
