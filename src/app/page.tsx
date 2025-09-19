@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import styles from "./page.module.css";
-import Input from "@/components/input";
-import TodoList from "@/components/list";
+import Header from "@/components/header";
 import { TodoType } from "@/types/todo";
+import Card from "@/components/card/card";
 
 export default function Home() {
   const [task, setTask] = useState<string>("");
@@ -54,28 +54,21 @@ export default function Home() {
     setTasks((prevTasks) => prevTasks.filter((t) => t.id !== id));
   };
 
-  const handleAddReference = (id: string, reference: string) => {
-    setTasks((prevTasks) => {
-      const newTasks = [...prevTasks];
-      const taskIndex = newTasks.findIndex((t) => t.id === id);
-      newTasks[taskIndex] = {
-        ...newTasks[taskIndex],
-        reference: [...newTasks[taskIndex].reference, reference],
-      };
-      return newTasks;
-    });
-  };
-
   return (
     <div className={styles.container}>
       <h1>Marq Todo</h1>
-      <Input task={task} setTask={setTask} handleAddTask={handleAddTask} />
-      <TodoList
-        tasks={tasks}
-        handleEditTask={handleEditTask}
-        handleDeleteTask={handleDeleteTask}
-        handleCompleteTask={handleCompleteTask}
-      />
+      <Header task={task} setTask={setTask} handleAddTask={handleAddTask} />
+      <div className={styles["list-container"]}>
+        {tasks.map((task) => (
+          <Card
+            key={task.id}
+            task={task}
+            handleEditTask={handleEditTask}
+            handleDeleteTask={handleDeleteTask}
+            handleCompleteTask={handleCompleteTask}
+          />
+        ))}
+      </div>
     </div>
   );
 }

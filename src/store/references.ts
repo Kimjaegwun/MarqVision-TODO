@@ -2,13 +2,17 @@ import { create } from "zustand";
 
 type ReferencesStore = {
   references: string[];
-  addReference: (reference: string) => void;
-  deleteReference: (reference: string) => void;
+  setReferences: (reference: string) => void;
 };
 
-export const useReferencesStore = create<ReferencesStore>((set) => ({
+export const useReferencesStore = create<ReferencesStore>((set, get) => ({
   references: [],
-  addReference: (reference) => set((state) => ({ references: [...state.references, reference] })),
-  deleteReference: (reference) =>
-    set((state) => ({ references: state.references.filter((r) => r !== reference) })),
+  setReferences: (reference) => {
+    const references = get().references;
+    if (references.includes(reference)) {
+      set({ references: references.filter((r) => r !== reference) });
+    } else {
+      set({ references: [...references, reference] });
+    }
+  },
 }));

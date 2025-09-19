@@ -7,8 +7,8 @@
   --light-red: rgb(255, 113, 113);
   --light-blue: rgb(113, 184, 255);
   --light-gray: rgb(196, 196, 196);
+  --light-orange: rgb(255, 165, 0);
   --dark-green: rgb(0, 128, 0);
-  --light-black: rgb(33, 33, 33);
 }
 
 html,
