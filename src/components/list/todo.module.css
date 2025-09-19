@@ -1,48 +1,84 @@
+.todo-container {
+  display: flex;
+  width: 100%;
+  gap: 4px;
+}
+
 .todo-wrapper {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   width: 100%;
   border: 1px solid var(--border);
   border-radius: 5px;
   padding: 6px 8px;
   gap: 4px;
 
+  .todo-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+
   input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     border: 1px solid var(--border);
     border-radius: 5px;
   }
 
-  .todo-input {
+  .todo-checkbox-text {
+    font-size: 12px;
+  }
+
+  .todo-reference {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    margin-left: auto;
+    padding: 4px 6px;
+    background-color: var(--light-gray);
+    color: var(--background);
+
+    span {
+      font-size: 10px;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .todo-area {
     flex: 1;
-    padding: 0 2px;
+    padding: 4px;
     border: none;
     outline: none;
     font-size: 16px;
     background-color: transparent;
     min-height: 26px;
+    margin: 4px 0;
+    resize: none;
     &:focus {
       border-radius: 5px;
       background-color: var(--surface);
     }
   }
 
-  button[title="edit"] {
-    background-color: var(--button);
-    color: var(--background);
-    border: none;
-    border-radius: 5px;
-    padding: 6px 10px;
-    cursor: pointer;
+  .todo-date {
     font-size: 12px;
-
-    &:hover {
-      background-color: var(--blue);
-    }
+    color: var(--light-gray);
   }
+}
 
-  button[title="save"] {
+.todo-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 40px;
+
+  button {
     background-color: var(--foreground);
     color: var(--background);
     border: none;
@@ -50,29 +86,29 @@
     padding: 6px 10px;
     cursor: pointer;
     font-size: 12px;
-  }
+    flex: 1;
+    writing-mode: vertical-rl;
 
-  button[title="delete"] {
-    background-color: var(--button);
-    color: var(--background);
-    border: none;
-    border-radius: 5px;
-    padding: 6px 10px;
-    cursor: pointer;
-    font-size: 12px;
-
-    &:hover {
-      background-color: var(--red);
+    &[title="edit"] {
+      background-color: var(--button);
+      &:hover {
+        background-color: var(--light-blue);
+      }
     }
-  }
 
-  button[title="cancel"] {
-    background-color: var(--button);
-    color: var(--background);
-    border: none;
-    border-radius: 5px;
-    padding: 6px 10px;
-    cursor: pointer;
-    font-size: 12px;
+    &[title="save"] {
+      background-color: var(--dark-green);
+    }
+
+    &[title="delete"] {
+      background-color: var(--light-red);
+      &:hover {
+        background-color: var(--light-red);
+      }
+    }
+
+    &[title="cancel"] {
+      background-color: var(--button);
+    }
   }
 }

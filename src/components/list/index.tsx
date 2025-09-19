@@ -1,24 +1,27 @@
 import Todo from "./todo";
 import styles from "./index.module.css";
+import { TodoType } from "@/types/todo";
 
 const TodoList = ({
   tasks,
   handleEditTask,
   handleDeleteTask,
+  handleCompleteTask,
 }: {
-  tasks: string[];
-  handleEditTask: (index: number, value: string) => void;
-  handleDeleteTask: (index: number) => void;
+  tasks: Array<TodoType>;
+  handleEditTask: (id: string, value: string) => void;
+  handleDeleteTask: (id: string) => void;
+  handleCompleteTask: (id: string) => void;
 }) => {
   return (
     <div className={styles["list-container"]}>
-      {tasks.map((task, index) => (
+      {tasks.map((task) => (
         <Todo
-          key={task}
+          key={task.id}
           task={task}
           handleEditTask={handleEditTask}
           handleDeleteTask={handleDeleteTask}
-          index={index}
+          handleCompleteTask={handleCompleteTask}
         />
       ))}
     </div>

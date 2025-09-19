@@ -12,6 +12,7 @@ const Input = ({
   return (
     <div className={styles["input-wrapper"]}>
       <input
+        aria-label="task-input"
         className={styles.input}
         type="text"
         placeholder="Add a new task"
@@ -19,7 +20,7 @@ const Input = ({
         onChange={(e) => setTask(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
       />
-      <button className={styles.button} onClick={handleAddTask}>
+      <button className={styles.button} onClick={handleAddTask} aria-label="task-add-button">
         Add
       </button>
     </div>

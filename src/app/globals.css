@@ -4,15 +4,18 @@
   --button: #b0b0b0;
   --surface: #f0f0f0;
   --foreground: #000000;
-  --red: #ff0000;
-  --blue: #0000ff;
+  --light-red: rgb(255, 113, 113);
+  --light-blue: rgb(113, 184, 255);
+  --light-gray: rgb(196, 196, 196);
+  --dark-green: rgb(0, 128, 0);
+  --light-black: rgb(33, 33, 33);
 }
 
 html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  background-color: #f0f0f0;
+  background-color: var(--surface);
 }
 
 body {
