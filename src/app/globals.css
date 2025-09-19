@@ -2,6 +2,10 @@
   --background: #ffffff;
   --border: #ccc;
   --button: #b0b0b0;
+  --surface: #f0f0f0;
+  --foreground: #000000;
+  --red: #ff0000;
+  --blue: #0000ff;
 }
 
 html,

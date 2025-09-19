@@ -8,16 +8,24 @@
   gap: 4px;
 
   input[type="checkbox"] {
-    margin-right: 10px;
     width: 20px;
     height: 20px;
     border: 1px solid var(--border);
     border-radius: 5px;
   }
 
-  span {
+  .todo-input {
     flex: 1;
     padding: 0 2px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background-color: transparent;
+    min-height: 26px;
+    &:focus {
+      border-radius: 5px;
+      background-color: var(--surface);
+    }
   }
 
   button[title="edit"] {
@@ -27,6 +35,21 @@
     border-radius: 5px;
     padding: 6px 10px;
     cursor: pointer;
+    font-size: 12px;
+
+    &:hover {
+      background-color: var(--blue);
+    }
+  }
+
+  button[title="save"] {
+    background-color: var(--foreground);
+    color: var(--background);
+    border: none;
+    border-radius: 5px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 12px;
   }
 
   button[title="delete"] {
@@ -36,5 +59,20 @@
     border-radius: 5px;
     padding: 6px 10px;
     cursor: pointer;
+    font-size: 12px;
+
+    &:hover {
+      background-color: var(--red);
+    }
+  }
+
+  button[title="cancel"] {
+    background-color: var(--button);
+    color: var(--background);
+    border: none;
+    border-radius: 5px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 12px;
   }
 }

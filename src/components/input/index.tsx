@@ -1,6 +1,14 @@
 import styles from "./index.module.css";
 
-const Input = ({ task, setTask, handleAddTask }: { task: string, setTask: (task: string) => void, handleAddTask: () => void }) => {
+const Input = ({
+  task,
+  setTask,
+  handleAddTask,
+}: {
+  task: string;
+  setTask: (task: string) => void;
+  handleAddTask: () => void;
+}) => {
   return (
     <div className={styles["input-wrapper"]}>
       <input
@@ -9,6 +17,7 @@ const Input = ({ task, setTask, handleAddTask }: { task: string, setTask: (task:
         placeholder="Add a new task"
         value={task}
         onChange={(e) => setTask(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
       />
       <button className={styles.button} onClick={handleAddTask}>
         Add
