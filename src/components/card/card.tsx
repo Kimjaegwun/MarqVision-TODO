@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, memo, useEffect, useRef, useState } from "react";
 import styles from "./card.module.css";
 import { TodoType } from "@/types/todo";
 import { useReferencesStore } from "@/store/references";
@@ -13,7 +13,7 @@ const CardHeader = ({
   const { setReferences, references } = useReferencesStore();
 
   return (
-    <div className={styles["card-checkbox"]} onClick={() => handleCompleteTask(task.id)}>
+    <div className={styles["card-header"]} onClick={() => handleCompleteTask(task.id)}>
       <input
         type="checkbox"
         title="checkbox"
@@ -21,9 +21,9 @@ const CardHeader = ({
         checked={task.completed}
         onChange={() => handleCompleteTask(task.id)}
       />
-      <span className={styles["card-checkbox-text"]}>{task.id}</span>
+      <span className={styles["checkbox-text"]}>{task.id}</span>
       <div
-        className={styles["card-reference"]}
+        className={styles["reference-button"]}
         onClick={(e) => {
           e.stopPropagation();
           setReferences(task.id);
@@ -64,7 +64,7 @@ const CardBody = forwardRef(
         <textarea
           ref={ref}
           aria-label="task-edit-input"
-          className={styles["card-area"]}
+          className={styles["card-textarea"]}
           disabled={!isEditing}
           value={editedTask.task}
           onChange={(e) => setEditedTask((prev: TodoType) => ({ ...prev, task: e.target.value }))}
@@ -79,8 +79,17 @@ const CardBody = forwardRef(
             textDecoration: task.completed ? "line-through" : "none",
           }}
         />
-        <p className={styles["card-date"]}>[생성일: {new Date(task.createdAt).toLocaleString()}]</p>
-        <p className={styles["card-date"]}>[수정일: {new Date(task.updatedAt).toLocaleString()}]</p>
+        <div className={styles["card-footer"]}>
+          <p className={styles["card-date"]}>
+            [생성일: {new Date(task.createdAt).toLocaleString()}]
+          </p>
+          <p className={styles["card-date"]}>
+            [수정일: {new Date(task.updatedAt).toLocaleString()}]
+          </p>
+          {task.references.length > 0 && (
+            <p className={styles["card-references"]}>[참조: {task.references.join(", ")}]</p>
+          )}
+        </div>
       </>
     );
   }
@@ -169,7 +178,7 @@ const Card = ({
 
   return (
     <div className={styles["card-container"]}>
-      <div className={styles["card-wrapper"]}>
+      <div className={styles["card-content"]}>
         <CardHeader task={task} handleCompleteTask={handleCompleteTask} />
         <CardBody
           ref={textareaRef}

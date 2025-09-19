@@ -4,5 +4,5 @@ export type TodoType = {
   createdAt: Date;
   updatedAt: Date;
   completed: boolean;
-  reference: string[];
+  references: string[];
 };

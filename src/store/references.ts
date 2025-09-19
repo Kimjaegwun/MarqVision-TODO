@@ -3,6 +3,7 @@ import { create } from "zustand";
 type ReferencesStore = {
   references: string[];
   setReferences: (reference: string) => void;
+  initializeReferences: () => void;
 };
 
 export const useReferencesStore = create<ReferencesStore>((set, get) => ({
@@ -14,5 +15,8 @@ export const useReferencesStore = create<ReferencesStore>((set, get) => ({
     } else {
       set({ references: [...references, reference] });
     }
+  },
+  initializeReferences: () => {
+    set({ references: [] });
   },
 }));
