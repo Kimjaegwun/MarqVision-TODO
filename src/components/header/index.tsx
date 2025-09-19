@@ -1,16 +1,34 @@
 import styles from "./index.module.css";
 import { useReferencesStore } from "@/store/references";
+import { useState, useEffect } from "react";
+import { TodoType } from "@/types/todo";
 
-const Header = ({
-  task,
-  setTask,
-  handleAddTask,
-}: {
-  task: string;
-  setTask: (task: string) => void;
-  handleAddTask: () => void;
-}) => {
+const Header = () => {
+  const [task, setTask] = useState("");
+  const [todos, setTodos] = useState<TodoType[]>([]);
+
   const { references, setReferences } = useReferencesStore();
+
+  const handleAddTask = async () => {
+    await fetch("/api/todos", {
+      method: "POST",
+      body: JSON.stringify({ task }),
+    }).then(async () => {
+      const response = await fetch("/api/todos");
+      const data = await response.json();
+      setTodos(data);
+    });
+  };
+
+  useEffect(() => {
+    (async () => {
+      const response = await fetch("/api/todos");
+      const data = await response.json();
+      setTodos(data);
+    })();
+  }, []);
+
+  console.log(todos);
 
   return (
     <div className={styles["header-container"]}>
@@ -22,7 +40,7 @@ const Header = ({
           placeholder="Add a new task"
           value={task}
           onChange={(e) => setTask(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
+          // onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
         />
         <button
           className={styles["header-button"]}
