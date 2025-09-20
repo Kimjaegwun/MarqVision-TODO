@@ -5,3 +5,5 @@ export * from "./useAddTodo";
 export * from "./useEditTodo";
 export * from "./useDeleteTodo";
 export * from "./useCompleteTodo";
+
+export * from "./useIntersection";

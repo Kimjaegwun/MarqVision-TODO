@@ -1,7 +1,11 @@
-import { TodoType } from "@/types/todo";
+import { TodoListType, TodoType } from "@/types/todo";
 
-export const getTodos = async (): Promise<TodoType[]> => {
-  const res = await fetch("/api/todos");
+export const getTodos = async (cursor: string | null): Promise<TodoListType> => {
+  const params = new URLSearchParams();
+  if (cursor) {
+    params.set("cursor", cursor);
+  }
+  const res = await fetch(`/api/todos?${params.toString()}`);
   if (!res.ok) throw new Error("Failed to fetch");
   return res.json();
 };

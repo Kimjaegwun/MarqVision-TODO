@@ -4,8 +4,26 @@ import { TodoType } from "@/types/todo";
 let todos: TodoType[] = [];
 
 export const handlers = [
-  http.get("/api/todos", () => {
-    return HttpResponse.json(todos, { status: 200 });
+  http.get("/api/todos", async ({ request }) => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    const url = new URL(request.url);
+    const limit = Number(url.searchParams.get("limit") ?? "10");
+    const cursor = url.searchParams.get("cursor") ?? null;
+
+    const sorted = [...todos].sort((a, b) => {
+      const aT = new Date(a.createdAt).getTime();
+      const bT = new Date(b.createdAt).getTime();
+      return bT - aT;
+    });
+
+    const start = cursor ? sorted.findIndex((t) => t.id === cursor) : 0;
+    const items = sorted.slice(start, start + limit);
+    const next = sorted[start + limit];
+    const nextCursor = next ? next.id : null;
+    const hasMore = Boolean(next);
+
+    return HttpResponse.json({ todos: items, nextCursor, hasMore }, { status: 200 });
   }),
 
   http.post("/api/todos", async ({ request }) => {

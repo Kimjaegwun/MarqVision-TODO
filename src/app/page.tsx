@@ -4,6 +4,8 @@ import styles from "./page.module.css";
 import Header from "@/components/header";
 import Card from "@/components/card/card";
 import { useGetTodoList } from "@/hooks/useGetTodoList";
+import useIntersection from "@/hooks/useIntersection";
+import Skeleton from "@/components/common/skeleton";
 
 export default function Home() {
   return (
@@ -16,13 +18,49 @@ export default function Home() {
 }
 
 const TodoList = () => {
-  const { data: todos, isLoading } = useGetTodoList();
+  const {
+    data: todos,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetTodoList();
 
-  if (isLoading) return <div>Loading...</div>;
+  const { ref } = useIntersection({
+    threshold: 0.5,
+    onIntersect: () => {
+      fetchNextPage();
+    },
+  });
+
+  if (isLoading) {
+    return <LoadingComponent />;
+  }
+
   return (
     <div className={styles["list-container"]}>
-      {todos?.map((task) => (
-        <Card key={task.id} task={task} />
+      {todos?.pages
+        .flatMap((page) => page.todos)
+        .map((task) => (
+          <Card key={task.id} task={task} />
+        ))}
+      {isFetchingNextPage && <LoadingComponent />}
+      {hasNextPage && <div ref={ref} />}
+    </div>
+  );
+};
+
+const LoadingComponent = () => {
+  return (
+    <div className={styles["loading-container"]}>
+      {Array.from({ length: 10 }).map((_, index) => (
+        <div key={index} className={styles["loading-item"]}>
+          <Skeleton width="100%" height="136.5px" />
+          <div className={styles["loading-action"]}>
+            <Skeleton width="100%" height="66.25px" />
+            <Skeleton width="100%" height="66.25px" />
+          </div>
+        </div>
       ))}
     </div>
   );
