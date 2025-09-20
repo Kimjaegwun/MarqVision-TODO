@@ -8,7 +8,7 @@ export const MSWComponent = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const init = async () => {
-      const initMsw = await import("@/hooks/initMsw").then((res) => res.initMsw);
+      const initMsw = await import("@/hooks").then((res) => res.initMsw);
       await initMsw();
       setMswReady(true);
     };

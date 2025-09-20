@@ -1,25 +1,21 @@
-import { forwardRef, memo, useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import styles from "./card.module.css";
 import { TodoType } from "@/types/todo";
 import { useReferencesStore } from "@/store/references";
+import { useEditTodo, useDeleteTodo, useCompleteTodo } from "@/hooks";
 
-const CardHeader = ({
-  task,
-  handleCompleteTask,
-}: {
-  task: TodoType;
-  handleCompleteTask: (id: string) => void;
-}) => {
+const CardHeader = ({ task }: { task: TodoType }) => {
   const { setReferences, references } = useReferencesStore();
+  const { mutate: completeTodo } = useCompleteTodo();
 
   return (
-    <div className={styles["card-header"]} onClick={() => handleCompleteTask(task.id)}>
+    <div className={styles["card-header"]} onClick={() => completeTodo(task.id)}>
       <input
         type="checkbox"
         title="checkbox"
         aria-label="checkbox"
         checked={task.completed}
-        onChange={() => handleCompleteTask(task.id)}
+        onChange={() => completeTodo(task.id)}
       />
       <span className={styles["checkbox-text"]}>{task.id}</span>
       <div
@@ -44,16 +40,12 @@ const CardBody = forwardRef(
   (
     {
       task,
-      handleEditTask,
       isEditing,
-      setIsEditing,
       editedTask,
       setEditedTask,
     }: {
       task: TodoType;
-      handleEditTask: (id: string, value: string) => void;
       isEditing: boolean;
-      setIsEditing: (isEditing: boolean) => void;
       editedTask: TodoType;
       setEditedTask: React.Dispatch<React.SetStateAction<TodoType>>;
     },
@@ -68,12 +60,6 @@ const CardBody = forwardRef(
           disabled={!isEditing}
           value={editedTask.task}
           onChange={(e) => setEditedTask((prev: TodoType) => ({ ...prev, task: e.target.value }))}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              setIsEditing(false);
-              handleEditTask(editedTask.id, editedTask.task);
-            }
-          }}
           title={"task"}
           style={{
             textDecoration: task.completed ? "line-through" : "none",
@@ -103,21 +89,20 @@ const CardActions = ({
   setIsEditing,
   editedTask,
   setEditedTask,
-  handleEditTask,
-  handleDeleteTask,
 }: {
   task: TodoType;
   isEditing: boolean;
   setIsEditing: (isEditing: boolean) => void;
   editedTask: TodoType;
   setEditedTask: (editedTask: TodoType) => void;
-  handleEditTask: (id: string, value: string) => void;
-  handleDeleteTask: (id: string) => void;
 }) => {
+  const { mutate: editTodo } = useEditTodo();
+  const { mutate: deleteTodo } = useDeleteTodo();
+
   const handleEdit = () => {
     if (isEditing) {
       setIsEditing(false);
-      handleEditTask(editedTask.id, editedTask.task);
+      editTodo({ id: editedTask.id, task: editedTask.task });
       return;
     }
 
@@ -130,8 +115,8 @@ const CardActions = ({
       setEditedTask(task);
       return;
     }
-
-    handleDeleteTask(task.id);
+    console.log("deleteTodo", task.id);
+    deleteTodo(task.id);
   };
 
   return (
@@ -154,17 +139,7 @@ const CardActions = ({
   );
 };
 
-const Card = ({
-  task,
-  handleEditTask,
-  handleDeleteTask,
-  handleCompleteTask,
-}: {
-  task: TodoType;
-  handleEditTask: (id: string, value: string) => void;
-  handleDeleteTask: (id: string) => void;
-  handleCompleteTask: (id: string) => void;
-}) => {
+const Card = ({ task }: { task: TodoType }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [editedTask, setEditedTask] = useState(() => task);
@@ -179,13 +154,11 @@ const Card = ({
   return (
     <div className={styles["card-container"]}>
       <div className={styles["card-content"]}>
-        <CardHeader task={task} handleCompleteTask={handleCompleteTask} />
+        <CardHeader task={task} />
         <CardBody
           ref={textareaRef}
           task={task}
-          handleEditTask={handleEditTask}
           isEditing={isEditing}
-          setIsEditing={setIsEditing}
           editedTask={editedTask}
           setEditedTask={setEditedTask}
         />
@@ -196,8 +169,6 @@ const Card = ({
         setIsEditing={setIsEditing}
         editedTask={editedTask}
         setEditedTask={setEditedTask}
-        handleEditTask={handleEditTask}
-        handleDeleteTask={handleDeleteTask}
       />
     </div>
   );

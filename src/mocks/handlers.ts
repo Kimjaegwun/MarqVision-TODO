@@ -9,21 +9,16 @@ export const handlers = [
   }),
 
   http.post("/api/todos", async ({ request }) => {
-    const body = await request.json().catch(() => ({} as Partial<TodoType>));
+    const body = (await request.json()) as Pick<TodoType, "task" | "references">;
 
-    const id =
-      (body as Partial<TodoType>).id ??
-      (globalThis.crypto && "randomUUID" in globalThis.crypto
-        ? globalThis.crypto.randomUUID()
-        : Math.random().toString(36).slice(2));
-
+    const id = crypto.randomUUID();
     const newTodo: TodoType = {
       id,
-      task: (body as Partial<TodoType>).task ?? "",
+      task: body.task,
       createdAt: new Date(),
       updatedAt: new Date(),
-      completed: (body as Partial<TodoType>).completed ?? false,
-      references: (body as Partial<TodoType>).references ?? [],
+      completed: false,
+      references: body.references || [],
     };
 
     todos = [newTodo, ...todos];
@@ -31,8 +26,8 @@ export const handlers = [
   }),
 
   http.put("/api/todos/:id", async ({ params, request }) => {
-    const { id } = params as { id: string };
-    const body = await request.json().catch(() => ({} as Partial<TodoType>));
+    const { id } = params as Pick<TodoType, "id">;
+    const body = (await request.json()) as Pick<TodoType, "task">;
 
     const idx = todos.findIndex((t) => t.id === id);
     if (idx === -1) {
@@ -41,7 +36,7 @@ export const handlers = [
 
     const updated: TodoType = {
       ...todos[idx],
-      ...(body as Partial<TodoType>),
+      task: body.task,
       updatedAt: new Date(),
     };
 
@@ -50,7 +45,7 @@ export const handlers = [
   }),
 
   http.delete("/api/todos/:id", async ({ params }) => {
-    const { id } = params as { id: string };
+    const { id } = params as Pick<TodoType, "id">;
     const exists = todos.some((t) => t.id === id);
     if (!exists) {
       return HttpResponse.json({ message: "Not found" }, { status: 404 });
@@ -58,5 +53,32 @@ export const handlers = [
 
     todos = todos.filter((t) => t.id !== id);
     return new HttpResponse(null, { status: 204 });
+  }),
+
+  http.post("/api/todos/complete", async ({ request }) => {
+    const body = (await request.json()) as Pick<TodoType, "id">;
+    const exists = todos.some((t) => t.id === body.id);
+    if (!exists) {
+      return HttpResponse.json({ message: "Not found" }, { status: 404 });
+    }
+
+    const idx = todos.findIndex((t) => t.id === body.id);
+    const filteredTodos = todos.filter((t) => t.id !== body.id);
+    const checkReferencesCompleted = filteredTodos.every((t) => {
+      return todos[idx].references.includes(t.id) && t.completed;
+    });
+
+    const updated: TodoType = {
+      ...todos[idx],
+      completed:
+        todos[idx].references.length === 0
+          ? !todos[idx].completed
+          : !todos[idx].completed && checkReferencesCompleted
+          ? true
+          : false,
+    };
+
+    todos[idx] = updated;
+    return HttpResponse.json(updated, { status: 200 });
   }),
 ];
