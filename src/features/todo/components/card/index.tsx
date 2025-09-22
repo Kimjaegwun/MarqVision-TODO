@@ -4,41 +4,6 @@ import { TodoType } from "@/types/todo";
 import { useReferencesStore } from "@/features/todo/store/references";
 import { useEditTodo, useDeleteTodo, useCompleteTodo } from "@/features/todo/hooks";
 
-const CardHeader = ({ task }: { task: TodoType }) => {
-  const { setReferences, references } = useReferencesStore();
-  const { mutate: completeTodo, isPending } = useCompleteTodo();
-
-  return (
-    <div className={styles["card-header"]}>
-      <input
-        type="checkbox"
-        title="checkbox"
-        aria-label="checkbox"
-        checked={task.completed}
-        onChange={(e) => {
-          e.stopPropagation();
-          if (!isPending) completeTodo(task.id);
-        }}
-      />
-      <span className={styles["checkbox-text"]}>{task.id}</span>
-      <div
-        className={styles["reference-button"]}
-        onClick={(e) => {
-          e.stopPropagation();
-          setReferences(task.id);
-        }}
-        style={{
-          backgroundColor: references.includes(task.id)
-            ? "var(--light-orange)"
-            : "var(--light-gray)",
-        }}
-      >
-        <span>REF</span>
-      </div>
-    </div>
-  );
-};
-
 const CardBody = forwardRef(
   (
     {
@@ -68,15 +33,16 @@ const CardBody = forwardRef(
             textDecoration: task.completed ? "line-through" : "none",
           }}
         />
+        <span className={styles["card-id"]}># {task.id}</span>
         <div className={styles["card-footer"]}>
           <p className={styles["card-date"]}>
-            [생성일: {new Date(task.createdAt).toLocaleString()}]
+            created: {new Date(task.createdAt).toLocaleString()}
           </p>
           <p className={styles["card-date"]}>
-            [수정일: {new Date(task.updatedAt).toLocaleString()}]
+            updated: {new Date(task.updatedAt).toLocaleString()}
           </p>
           {task.references.length > 0 && (
-            <p className={styles["card-references"]}>[참조: {task.references.join(", ")}]</p>
+            <p className={styles["card-references"]}>ref: {task.references.join(", ")}</p>
           )}
         </div>
       </>
@@ -99,10 +65,18 @@ const CardActions = ({
   editedTask: TodoType;
   setEditedTask: (editedTask: TodoType) => void;
 }) => {
+  const { setReferences, references } = useReferencesStore();
+
   const { mutate: editTodo } = useEditTodo();
   const { mutate: deleteTodo } = useDeleteTodo();
+  const { mutate: completeTodo, isPending } = useCompleteTodo();
 
   const handleEdit = () => {
+    if (task.completed) {
+      window.alert("Completed tasks cannot be edited");
+      return;
+    }
+
     if (isEditing) {
       setIsEditing(false);
       editTodo({ id: editedTask.id, task: editedTask.task });
@@ -112,31 +86,62 @@ const CardActions = ({
     setIsEditing(!isEditing);
   };
 
+  const handleCancel = () => {
+    setIsEditing(false);
+    editTodo({ id: editedTask.id, task: editedTask.task });
+  };
+
   const handleDelete = () => {
-    if (isEditing) {
-      setIsEditing(false);
-      setEditedTask(task);
-      return;
-    }
+    const result = window.confirm("do you really want to delete?");
+    if (!result) return;
     deleteTodo(task.id);
   };
 
   return (
     <div className={styles["card-buttons"]}>
-      <button
-        aria-label={isEditing ? "save-button" : "edit-button"}
-        title={isEditing ? "save" : "edit"}
-        onClick={handleEdit}
+      <div
+        className={styles["reference-button"]}
+        onClick={(e) => {
+          e.stopPropagation();
+          setReferences(task.id);
+        }}
+        style={{
+          backgroundColor: references.includes(task.id)
+            ? "var(--light-orange)"
+            : "var(--light-gray)",
+        }}
       >
-        {isEditing ? "Save" : "Edit"}
-      </button>
-      <button
-        aria-label={isEditing ? "cancel-button" : "delete-button"}
-        title={isEditing ? "cancel" : "delete"}
-        onClick={handleDelete}
-      >
-        {isEditing ? "Cancel" : "Delete"}
-      </button>
+        <span>REF</span>
+      </div>
+      <div className={styles["card-buttons-wrapper"]}>
+        <button
+          aria-label="complete-button"
+          title="complete"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!isPending) completeTodo(task.id);
+          }}
+          style={{
+            backgroundColor: task.completed ? "var(--button)" : "var(--foreground)",
+          }}
+        >
+          {task.completed ? "☓ Undo" : "✓ Complete"}
+        </button>
+        <button
+          aria-label={isEditing ? "save-button" : "edit-button"}
+          title={isEditing ? "save" : "edit"}
+          onClick={handleEdit}
+        >
+          {isEditing ? "Save" : "Edit"}
+        </button>
+        <button
+          aria-label={isEditing ? "cancel-button" : "delete-button"}
+          title={isEditing ? "cancel" : "delete"}
+          onClick={isEditing ? handleCancel : handleDelete}
+        >
+          {isEditing ? "Cancel" : "Delete"}
+        </button>
+      </div>
     </div>
   );
 };
@@ -159,21 +164,24 @@ const Card = ({ task }: { task: TodoType }) => {
   }, [isEditing]);
 
   return (
-    <div className={styles["card-container"]}>
-      <div className={styles["card-content"]}>
-        <CardHeader task={task} />
-        <CardBody
-          ref={textareaRef}
-          task={task}
-          isEditing={isEditing}
-          editedTask={editedTask}
-          setEditedTask={setEditedTask}
-        />
-      </div>
+    <div
+      className={styles["card-container"]}
+      style={{
+        backgroundColor: task.completed ? "var(--light-surface)" : "var(--background)",
+        opacity: task.completed ? 0.7 : 1,
+      }}
+    >
       <CardActions
         task={task}
         isEditing={isEditing}
         setIsEditing={setIsEditing}
+        editedTask={editedTask}
+        setEditedTask={setEditedTask}
+      />
+      <CardBody
+        ref={textareaRef}
+        task={task}
+        isEditing={isEditing}
         editedTask={editedTask}
         setEditedTask={setEditedTask}
       />

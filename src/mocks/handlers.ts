@@ -100,7 +100,7 @@ export const handlers = [
       if (completedReferences.length > 0) {
         return HttpResponse.json(
           {
-            message: `Referenced by completed todos: ${completedReferences
+            message: `Referenced by completed tasks: ${completedReferences
               .map((t) => t.id)
               .join(", ")}`,
           },
@@ -120,7 +120,7 @@ export const handlers = [
         (id) => !filteredTodos.find((t) => t.id === id)?.completed
       );
       return HttpResponse.json(
-        { message: `References not completed todos: ${notCompletedReferences.join(", ")}` },
+        { message: `References not completed tasks: ${notCompletedReferences.join(", ")}` },
         { status: 400 }
       );
     }
@@ -128,7 +128,6 @@ export const handlers = [
     const updated: TodoType = {
       ...todo,
       completed: !todo.completed,
-      updatedAt: new Date(),
     };
 
     todos[idx] = updated;
