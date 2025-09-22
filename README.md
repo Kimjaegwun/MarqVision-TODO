@@ -38,17 +38,17 @@
 ### 주요 설계/제약 로직
 
 - 완료 제약(`완료 토글`):
-  - 본 투두가 참조(`references`)하는 모든 투두가 완료 상태일 때만 완료로 전환 가능.
-  - 서버 기준 로직: `src/mocks/handlers.ts`의 `/api/todos/complete`
-  - 클라이언트 낙관적 반영: `src/features/todo/hooks/useCompleteTodo.ts`
+  - 해당 투두가 참조(`references`)하는 모든 투두가 완료 상태일 때만 완료로 전환 가능.
+  - 해당 투두를 참조하는 다른 투두 중 완료된 항목이 있으면 완료 해제 불가.
+  - 서버 기준 로직: `handlers.ts`의 `PUT /api/todos/:id/complete`
 - 삭제 정책:
   - 다른 투두가 해당 투두를 참조 중이면 삭제 불가(서버 400 반환).
-  - 클라이언트 사전 검사 및 알림: `useDeleteTodo.ts` (알림: "해당 투두는 참조가 있습니다.")
+  - 클라이언트 사전 검사 및 알림: `useDeleteTodo.ts`
   - 서버 기준 로직: `handlers.ts`의 `DELETE /api/todos/:id`
 - 페이지네이션:
   - 커서 기반 페이지네이션(`nextCursor`, `hasMore`) + 무한 스크롤.
   - 인터섹션 옵저버 훅: `src/shared/hooks/useIntersection.tsx`
-  - 목록 훅: `useGetTodoList` (React Query `fetchNextPage`)
+  - 목록 훅: `useGetTodoList`
 - 낙관적 업데이트:
   - 추가/삭제/수정/완료 시 캐시 우선 반영 후 서버 응답에 동기화(실패 시 롤백).
 

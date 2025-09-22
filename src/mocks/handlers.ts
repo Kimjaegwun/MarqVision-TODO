@@ -74,7 +74,7 @@ export const handlers = [
     const references = todos.filter((t) => t.references.includes(id));
     if (references.length > 0) {
       return HttpResponse.json(
-        { message: `Referenced by: ${references.map((t) => t.id).join(", ")}` },
+        { message: `Referenced by todos: ${references.map((t) => t.id).join(", ")}` },
         { status: 400 }
       );
     }
@@ -91,25 +91,43 @@ export const handlers = [
     }
 
     const idx = todos.findIndex((t) => t.id === body.id);
+    const todo = todos[idx];
+
+    if (todo.completed) {
+      const todosInReferences = todos.filter((t) => t.references.includes(todo.id));
+      const completedReferences = todosInReferences.filter((t) => t.completed);
+
+      if (completedReferences.length > 0) {
+        return HttpResponse.json(
+          {
+            message: `Referenced by completed todos: ${completedReferences
+              .map((t) => t.id)
+              .join(", ")}`,
+          },
+          { status: 400 }
+        );
+      }
+    }
+
     const filteredTodos = todos.filter((t) => t.id !== body.id);
     const checkReferencesCompleted = filteredTodos.every((t) => {
-      if (!todos[idx].references.includes(t.id)) return true;
+      if (!todo.references.includes(t.id)) return true;
       return t.completed;
     });
 
-    if (todos[idx].references.length > 0 && !checkReferencesCompleted) {
-      const notCompletedReferences = todos[idx].references.filter(
+    if (todo.references.length > 0 && !checkReferencesCompleted) {
+      const notCompletedReferences = todo.references.filter(
         (id) => !filteredTodos.find((t) => t.id === id)?.completed
       );
       return HttpResponse.json(
-        { message: `References not completed: ${notCompletedReferences.join(", ")}` },
+        { message: `References not completed todos: ${notCompletedReferences.join(", ")}` },
         { status: 400 }
       );
     }
 
     const updated: TodoType = {
-      ...todos[idx],
-      completed: !todos[idx].completed,
+      ...todo,
+      completed: !todo.completed,
       updatedAt: new Date(),
     };
 
