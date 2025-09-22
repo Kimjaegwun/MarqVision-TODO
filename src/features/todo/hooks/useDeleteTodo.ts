@@ -28,9 +28,12 @@ export const useDeleteTodo = () => {
 
       return { prev };
     },
-    onError: (_err, _vars, ctx) => {
+    onError: (error, _vars, ctx) => {
       if (ctx?.prev) {
         queryClient.setQueryData<InfiniteData<TodoListType>>(["todo", "list"], ctx.prev);
+      }
+      if (error.message) {
+        window.alert(error.message);
       }
     },
   });

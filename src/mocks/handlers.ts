@@ -51,7 +51,7 @@ export const handlers = [
 
     const idx = todos.findIndex((t) => t.id === id);
     if (idx === -1) {
-      return HttpResponse.json({ message: "Not found" }, { status: 404 });
+      return HttpResponse.json({ message: "Todo not found" }, { status: 404 });
     }
 
     const updated: TodoType = {
@@ -68,7 +68,12 @@ export const handlers = [
     const { id } = params as Pick<TodoType, "id">;
     const exists = todos.some((t) => t.id === id);
     if (!exists) {
-      return HttpResponse.json({ message: "Not found" }, { status: 404 });
+      return HttpResponse.json({ message: "Todo not found" }, { status: 404 });
+    }
+
+    const references = todos.filter((t) => t.references.includes(id));
+    if (references.length > 0) {
+      return HttpResponse.json({ message: "References exist" }, { status: 400 });
     }
 
     todos = todos.filter((t) => t.id !== id);
@@ -79,7 +84,7 @@ export const handlers = [
     const body = (await request.json()) as Pick<TodoType, "id">;
     const exists = todos.some((t) => t.id === body.id);
     if (!exists) {
-      return HttpResponse.json({ message: "Not found" }, { status: 404 });
+      return HttpResponse.json({ message: "Todo not found" }, { status: 404 });
     }
 
     const idx = todos.findIndex((t) => t.id === body.id);
