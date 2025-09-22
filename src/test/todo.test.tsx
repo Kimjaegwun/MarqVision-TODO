@@ -25,8 +25,10 @@ describe("테스트2: 할일 수정", () => {
   test("할일 수정 버튼 클릭 시 할일이 수정된다", async () => {
     renderWithClient(<Home />);
 
-    const textareas = await screen.findAllByLabelText("task-textarea");
-    expect(textareas.some((el) => (el as HTMLTextAreaElement).value === "테스트 입력")).toBe(true);
+    const input = screen.getByLabelText("task-input");
+    const addButton = screen.getByLabelText("task-add-button");
+    await userEvent.type(input, "테스트 입력");
+    await userEvent.click(addButton);
 
     const editButton = screen.getByLabelText("edit-button");
     await userEvent.click(editButton);
@@ -48,14 +50,19 @@ describe("테스트3: 할일 삭제", () => {
   test("할일 삭제 버튼 클릭 시 할일이 삭제된다", async () => {
     renderWithClient(<Home />);
 
-    const textareas = await screen.findAllByLabelText("task-textarea");
-    expect(textareas.some((el) => (el as HTMLTextAreaElement).value === "테스트 입력")).toBe(true);
+    const input = screen.getByLabelText("task-input");
+    const addButton = screen.getByLabelText("task-add-button");
+    await userEvent.type(input, "삭제 테스트");
+    await userEvent.click(addButton);
 
-    const deleteButton = screen.getByLabelText("delete-button");
-    await userEvent.click(deleteButton);
+    const textareas = await screen.findAllByLabelText("task-textarea");
+    const idx = textareas.findIndex((el) => (el as HTMLTextAreaElement).value === "삭제 테스트");
+
+    const deleteButtons = screen.getAllByLabelText("delete-button");
+    await userEvent.click(deleteButtons[idx]);
 
     await waitFor(() => {
-      expect(screen.queryByDisplayValue("테스트 입력")).toBeNull();
+      expect(screen.queryByDisplayValue("삭제 테스트")).toBeNull();
     });
   });
 });
