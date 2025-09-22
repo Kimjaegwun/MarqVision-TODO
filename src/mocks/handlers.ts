@@ -73,7 +73,10 @@ export const handlers = [
 
     const references = todos.filter((t) => t.references.includes(id));
     if (references.length > 0) {
-      return HttpResponse.json({ message: "References exist" }, { status: 400 });
+      return HttpResponse.json(
+        { message: `Referenced by: ${references.map((t) => t.id).join(", ")}` },
+        { status: 400 }
+      );
     }
 
     todos = todos.filter((t) => t.id !== id);
@@ -96,7 +99,7 @@ export const handlers = [
 
     if (todos[idx].references.length > 0 && !checkReferencesCompleted) {
       const notCompletedReferences = todos[idx].references.filter(
-        (id) => !filteredTodos.some((t) => t.id === id)
+        (id) => !filteredTodos.find((t) => t.id === id)?.completed
       );
       return HttpResponse.json(
         { message: `References not completed: ${notCompletedReferences.join(", ")}` },
