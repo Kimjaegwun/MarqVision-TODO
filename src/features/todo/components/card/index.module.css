@@ -39,7 +39,9 @@
         padding: 4px 6px;
         color: var(--background);
         cursor: pointer;
-
+        &:hover {
+          background-color: var(--light-orange) !important;
+        }
         span {
           font-size: 10px;
         }
