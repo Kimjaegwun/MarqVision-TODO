@@ -1,8 +1,8 @@
 import { forwardRef, useEffect, useRef, useState } from "react";
-import styles from "./card.module.css";
+import styles from "./index.module.css";
 import { TodoType } from "@/types/todo";
-import { useReferencesStore } from "@/store/references";
-import { useEditTodo, useDeleteTodo, useCompleteTodo } from "@/hooks";
+import { useReferencesStore } from "@/features/todo/store/references";
+import { useEditTodo, useDeleteTodo, useCompleteTodo } from "@/features/todo/hooks";
 
 const CardHeader = ({ task }: { task: TodoType }) => {
   const { setReferences, references } = useReferencesStore();
@@ -148,9 +148,14 @@ const Card = ({ task }: { task: TodoType }) => {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    if (isEditing) {
-      textareaRef.current?.focus();
-    }
+    if (!isEditing) return;
+    const id = requestAnimationFrame(() => {
+      const todoTextarea = textareaRef.current;
+      todoTextarea?.focus();
+      const end = todoTextarea?.value.length ?? 0;
+      todoTextarea?.setSelectionRange(end, end);
+    });
+    return () => cancelAnimationFrame(id);
   }, [isEditing]);
 
   return (

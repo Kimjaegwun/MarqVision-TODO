@@ -1,7 +1,7 @@
 import styles from "./index.module.css";
-import { useReferencesStore } from "@/store/references";
+import { useReferencesStore } from "@/features/todo/store/references";
 import { useState } from "react";
-import { useAddTodo } from "@/hooks";
+import { useAddTodo } from "@/features/todo/hooks";
 
 const Header = () => {
   const [task, setTask] = useState("");
@@ -10,6 +10,7 @@ const Header = () => {
   const { mutate: addTodo } = useAddTodo();
 
   const handleAddTask = async () => {
+    if (task.trim() === "") return;
     addTodo(
       { task, references },
       {
@@ -31,7 +32,7 @@ const Header = () => {
           value={task}
           onChange={(e) => setTask(e.target.value)}
           onKeyDown={(e) => {
-            if (task.trim() !== "" && e.key === "Enter") {
+            if (e.key === "Enter") {
               handleAddTask();
             }
           }}

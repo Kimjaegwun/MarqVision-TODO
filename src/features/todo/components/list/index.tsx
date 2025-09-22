@@ -1,9 +1,9 @@
-import Skeleton from "@/components/common/skeleton";
+import Skeleton from "@/shared/components/skeleton";
 
-import Card from "@/components/card/card";
-import { useGetTodoList } from "@/hooks/useGetTodoList";
-import useIntersection from "@/hooks/useIntersection";
-import styles from "./page.module.css";
+import Card from "@/features/todo/components/card";
+import { useGetTodoList } from "@/features/todo/hooks/useGetTodoList";
+import useIntersection from "@/shared/hooks/useIntersection";
+import styles from "./index.module.css";
 
 const TodoList = () => {
   const {

@@ -1,8 +1,8 @@
 "use client";
 
 import styles from "./page.module.css";
-import Header from "@/components/header";
-import TodoList from "./todoList";
+import Header from "@/features/todo/components/header";
+import TodoList from "@/features/todo/components/list";
 
 export default function Home() {
   return (

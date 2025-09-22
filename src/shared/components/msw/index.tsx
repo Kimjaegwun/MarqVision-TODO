@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import styles from "./msw.module.css";
+import styles from "./index.module.css";
 
 export const MSWComponent = ({ children }: { children: React.ReactNode }) => {
   const [mswReady, setMswReady] = useState(false);
 
   useEffect(() => {
     const init = async () => {
-      const initMsw = await import("@/hooks").then((res) => res.initMsw);
+      const initMsw = await import("@/shared/hooks/initMsw").then((res) => res.initMsw);
       await initMsw();
       setMswReady(true);
     };
