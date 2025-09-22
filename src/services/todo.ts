@@ -1,6 +1,6 @@
 import { TodoListType, TodoType } from "@/types/todo";
 
-export const getTodos = async (cursor: string | null): Promise<TodoListType> => {
+const getTodos = async (cursor: string | null): Promise<TodoListType> => {
   const params = new URLSearchParams();
   if (cursor) {
     params.set("cursor", cursor);
@@ -10,7 +10,7 @@ export const getTodos = async (cursor: string | null): Promise<TodoListType> => 
   return res.json();
 };
 
-export const addTodo = async (input: Pick<TodoType, "task" | "references">): Promise<TodoType> => {
+const addTodo = async (input: Pick<TodoType, "task" | "references">): Promise<TodoType> => {
   const res = await fetch("/api/todos", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -20,7 +20,7 @@ export const addTodo = async (input: Pick<TodoType, "task" | "references">): Pro
   return res.json();
 };
 
-export const editTodo = async (id: string, task: string): Promise<TodoType> => {
+const editTodo = async (id: string, task: string): Promise<TodoType> => {
   const res = await fetch(`/api/todos/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -30,12 +30,12 @@ export const editTodo = async (id: string, task: string): Promise<TodoType> => {
   return res.json();
 };
 
-export const deleteTodo = async (id: string) => {
+const deleteTodo = async (id: string) => {
   const res = await fetch(`/api/todos/${id}`, { method: "DELETE" });
   if (!res.ok) throw new Error("Failed to delete");
 };
 
-export const completeTodo = async (id: string): Promise<TodoType> => {
+const completeTodo = async (id: string): Promise<TodoType> => {
   const res = await fetch(`/api/todos/complete`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -44,3 +44,5 @@ export const completeTodo = async (id: string): Promise<TodoType> => {
   if (!res.ok) throw new Error("Failed to complete");
   return res.json();
 };
+
+export { getTodos, addTodo, editTodo, deleteTodo, completeTodo };

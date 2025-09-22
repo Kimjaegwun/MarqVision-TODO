@@ -55,7 +55,7 @@ const CardBody = forwardRef(
       <>
         <textarea
           ref={ref}
-          aria-label="task-edit-input"
+          aria-label="task-textarea"
           className={styles["card-textarea"]}
           disabled={!isEditing}
           value={editedTask.task}
@@ -115,7 +115,6 @@ const CardActions = ({
       setEditedTask(task);
       return;
     }
-    console.log("deleteTodo", task.id);
     deleteTodo(task.id);
   };
 

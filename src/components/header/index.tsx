@@ -25,13 +25,13 @@ const Header = () => {
     <div className={styles["header-container"]}>
       <div className={styles["header-wrapper"]}>
         <input
-          aria-label="task-input"
           className={styles["header-input"]}
           type="text"
           placeholder="Add a new task"
           value={task}
           onChange={(e) => setTask(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
+          aria-label="task-input"
         />
         <button
           className={styles["header-button"]}
