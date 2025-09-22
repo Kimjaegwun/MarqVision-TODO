@@ -94,14 +94,19 @@ export const handlers = [
       return t.completed;
     });
 
+    if (todos[idx].references.length > 0 && !checkReferencesCompleted) {
+      const notCompletedReferences = todos[idx].references.filter(
+        (id) => !filteredTodos.some((t) => t.id === id)
+      );
+      return HttpResponse.json(
+        { message: `References not completed: ${notCompletedReferences.join(", ")}` },
+        { status: 400 }
+      );
+    }
+
     const updated: TodoType = {
       ...todos[idx],
-      completed:
-        todos[idx].references.length === 0
-          ? !todos[idx].completed
-          : !todos[idx].completed && checkReferencesCompleted
-          ? true
-          : false,
+      completed: !todos[idx].completed,
       updatedAt: new Date(),
     };
 
