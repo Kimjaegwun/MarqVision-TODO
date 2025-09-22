@@ -1,45 +1,78 @@
-import { TodoType } from "@/types/todo";
+import type { InfiniteData } from "@tanstack/react-query";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { TodoListType, TodoType } from "@/types/todo";
 import { completeTodo } from "@/services/todo";
 
 export const useCompleteTodo = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: string) => {
-      await completeTodo(id);
-    },
+    mutationFn: (id: string) => completeTodo(id),
     onMutate: async (id) => {
       await queryClient.cancelQueries({ queryKey: ["todo", "list"] });
-      const prev = queryClient.getQueryData<TodoType[]>(["todo", "list"]);
-      if (prev) {
-        const idx = prev.findIndex((t) => t.id === id);
-        const filteredTodos = prev.filter((t) => t.id !== id);
-        const checkReferencesCompleted = filteredTodos.every((t) => {
-          return prev[idx].references.includes(t.id) && t.completed;
-        });
 
-        queryClient.setQueryData<TodoType[]>(
-          ["todo", "list"],
-          prev.map((t) =>
-            t.id === id
-              ? {
-                  ...t,
-                  completed:
-                    prev[idx].references.length === 0
-                      ? !prev[idx].completed
-                      : !prev[idx].completed && checkReferencesCompleted
-                      ? true
-                      : false,
-                }
-              : t
-          )
-        );
-      }
-      return { prev };
+      const prev = queryClient.getQueryData<InfiniteData<TodoListType>>(["todo", "list"]);
+      if (!prev) return { prev };
+
+      const pageIdx = prev.pages.findIndex((p) => p.todos.some((t) => t.id === id));
+      if (pageIdx === -1) return { prev };
+
+      const todoIdx = prev.pages[pageIdx].todos.findIndex((t) => t.id === id);
+      if (todoIdx === -1) return { prev };
+
+      const allTodos = prev.pages.flatMap((p) => p.todos);
+      const current = prev.pages[pageIdx].todos[todoIdx];
+      const refs = current.references;
+
+      const refsCompleted =
+        refs.length === 0
+          ? true
+          : refs.every((refId) => {
+              const ref = allTodos.find((todo) => todo.id === refId);
+              return ref ? ref.completed : false;
+            });
+
+      const nextCompleted =
+        refs.length === 0 ? !current.completed : !current.completed && refsCompleted ? true : false;
+
+      const newPages = prev.pages.map((page, i) =>
+        pageIdx !== i
+          ? page
+          : {
+              ...page,
+              todos: page.todos.map((todo, j) =>
+                todoIdx === j ? { ...todo, completed: nextCompleted } : todo
+              ),
+            }
+      );
+
+      queryClient.setQueryData<InfiniteData<TodoListType>>(["todo", "list"], {
+        ...prev,
+        pages: newPages,
+      });
+
+      return { prev, pageIdx, todoIdx };
+    },
+    onSuccess: (updated: TodoType, _vars, ctx) => {
+      queryClient.setQueryData<InfiniteData<TodoListType>>(["todo", "list"], (prev) => {
+        if (!prev || ctx?.pageIdx === undefined || ctx?.todoIdx === undefined) return prev;
+
+        const { pageIdx, todoIdx } = ctx;
+
+        const pages = prev.pages.slice();
+        const page = pages[pageIdx];
+        const todos = page.todos.slice();
+
+        todos[todoIdx] = updated;
+        pages[pageIdx] = { ...page, todos };
+
+        return { ...prev, pages };
+      });
     },
     onError: (_err, _vars, ctx) => {
-      if (ctx?.prev) queryClient.setQueryData(["todo", "list"], ctx.prev);
+      if (ctx?.prev) {
+        queryClient.setQueryData<InfiniteData<TodoListType>>(["todo", "list"], ctx.prev);
+      }
     },
   });
 };

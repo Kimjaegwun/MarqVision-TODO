@@ -3,7 +3,7 @@ import Skeleton from "@/components/common/skeleton";
 import Card from "@/components/card/card";
 import { useGetTodoList } from "@/hooks/useGetTodoList";
 import useIntersection from "@/hooks/useIntersection";
-import styles from "./todoList.module.css";
+import styles from "./page.module.css";
 
 const TodoList = () => {
   const {
@@ -12,6 +12,7 @@ const TodoList = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    isFetching,
   } = useGetTodoList();
 
   const { ref } = useIntersection({
@@ -33,7 +34,7 @@ const TodoList = () => {
           <Card key={task.id} task={task} />
         ))}
       {isFetchingNextPage && <LoadingComponent />}
-      {hasNextPage && <div ref={ref} />}
+      {hasNextPage && !isFetching && <div ref={ref} />}
     </div>
   );
 };

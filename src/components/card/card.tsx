@@ -6,16 +6,19 @@ import { useEditTodo, useDeleteTodo, useCompleteTodo } from "@/hooks";
 
 const CardHeader = ({ task }: { task: TodoType }) => {
   const { setReferences, references } = useReferencesStore();
-  const { mutate: completeTodo } = useCompleteTodo();
+  const { mutate: completeTodo, isPending } = useCompleteTodo();
 
   return (
-    <div className={styles["card-header"]} onClick={() => completeTodo(task.id)}>
+    <div className={styles["card-header"]}>
       <input
         type="checkbox"
         title="checkbox"
         aria-label="checkbox"
         checked={task.completed}
-        onChange={() => completeTodo(task.id)}
+        onChange={(e) => {
+          e.stopPropagation();
+          if (!isPending) completeTodo(task.id);
+        }}
       />
       <span className={styles["checkbox-text"]}>{task.id}</span>
       <div

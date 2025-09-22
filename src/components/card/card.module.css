@@ -17,13 +17,13 @@
       border-radius: 5px;
       padding: 6px 8px;
       gap: 4px;
-      cursor: pointer;
 
       input[type="checkbox"] {
         width: 16px;
         height: 16px;
         border: 1px solid var(--border);
         border-radius: 5px;
+        cursor: pointer;
       }
 
       .checkbox-text {

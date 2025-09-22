@@ -30,13 +30,18 @@ const Header = () => {
           placeholder="Add a new task"
           value={task}
           onChange={(e) => setTask(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
+          onKeyDown={(e) => {
+            if (task.trim() !== "" && e.key === "Enter") {
+              handleAddTask();
+            }
+          }}
           aria-label="task-input"
         />
         <button
           className={styles["header-button"]}
           onClick={handleAddTask}
           aria-label="task-add-button"
+          disabled={task.trim() === ""}
         >
           Add
         </button>

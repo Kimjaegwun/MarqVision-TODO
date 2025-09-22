@@ -5,6 +5,7 @@ let todos: TodoType[] = [];
 
 export const handlers = [
   http.get("/api/todos", async ({ request }) => {
+    // delay
     await new Promise((resolve) => setTimeout(resolve, 300));
 
     const url = new URL(request.url);
@@ -18,6 +19,7 @@ export const handlers = [
     });
 
     const start = cursor ? sorted.findIndex((t) => t.id === cursor) : 0;
+
     const items = sorted.slice(start, start + limit);
     const next = sorted[start + limit];
     const nextCursor = next ? next.id : null;
@@ -83,7 +85,8 @@ export const handlers = [
     const idx = todos.findIndex((t) => t.id === body.id);
     const filteredTodos = todos.filter((t) => t.id !== body.id);
     const checkReferencesCompleted = filteredTodos.every((t) => {
-      return todos[idx].references.includes(t.id) && t.completed;
+      if (!todos[idx].references.includes(t.id)) return true;
+      return t.completed;
     });
 
     const updated: TodoType = {
@@ -94,6 +97,7 @@ export const handlers = [
           : !todos[idx].completed && checkReferencesCompleted
           ? true
           : false,
+      updatedAt: new Date(),
     };
 
     todos[idx] = updated;
