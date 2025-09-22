@@ -3,13 +3,12 @@
 ### 실행 방법
 
 - 설치:
-  - npm: `npm install`
   - yarn: `yarn`
-- 개발 서버: `npm run dev` → `http://localhost:3000`
+- 개발 서버: `yarn dev` → `http://localhost:3000`
 - 프로덕션 빌드/실행:
-  - 빌드: `npm run build`
-  - 실행: `npm run start`
-- 테스트: `npm test`
+  - 빌드: `yarn run build`
+  - 실행: `yarn run start`
+- 테스트: `yarn test`
 
 ### 기술 스택 & 선택 이유
 
@@ -31,10 +30,10 @@
   - `handlers.ts`: Mock API 엔드포인트(단일 진실 소스)
   - `browser.ts` / `server.ts`: MSW 워커/서버 초기화
 - `src/shared/`
-  - `hooks/initMsw.ts` + `components/msw/`: 런타임에서 MSW 초기화
-  - `components/skeleton/`: 로딩 스켈레톤
-- `src/test/`: 테스트 유틸/세팅/사례
-- `src/types/todo.ts`: 도메인 타입
+  - `hooks`: 공용 로직 폴더
+  - `components/`: 공용 컴포넌트 폴더
+- `src/test/`: 테스트 유틸, 세팅
+- `src/types`: 도메인 타입
 
 ### 주요 설계/제약 로직
 
@@ -57,10 +56,7 @@
 
 - 러너/환경: Jest + jsdom, Testing Library
 - 공통 모킹: 테스트 시작 시 MSW 서버(`src/test/setup.ts`)로 핸들러 공유
-- 설정 파일:
-  - `jest.config.mjs`: Next.js 통합 설정(next/jest)
-  - `jest.setup.ts`: jest-dom + 공통 테스트 준비 로직
-- 실행: `npm test`
+- 실행: `yarn test`
 
 ### 가산점 구현
 
