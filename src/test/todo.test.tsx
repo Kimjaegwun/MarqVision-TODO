@@ -30,10 +30,10 @@ describe("테스트2: 할일 수정", () => {
     await userEvent.type(input, "테스트 입력");
     await userEvent.click(addButton);
 
-    const editButton = screen.getByLabelText("edit-button");
+    const editButton = await screen.findByText("Edit");
     await userEvent.click(editButton);
 
-    const saveButton = await screen.findByLabelText("save-button");
+    const saveButton = await screen.findByText("Save");
 
     const editInput = screen.getByLabelText("task-textarea");
     await userEvent.clear(editInput);
@@ -58,7 +58,7 @@ describe("테스트3: 할일 삭제", () => {
     const textareas = await screen.findAllByLabelText("task-textarea");
     const idx = textareas.findIndex((el) => (el as HTMLTextAreaElement).value === "삭제 테스트");
 
-    const deleteButtons = screen.getAllByLabelText("delete-button");
+    const deleteButtons = await screen.findAllByText("Delete");
     await userEvent.click(deleteButtons[idx]);
 
     await waitFor(() => {
