@@ -24,14 +24,12 @@ const CardBody = forwardRef(
         <textarea
           ref={ref}
           aria-label="task-textarea"
+          data-completed={task.completed}
           className={styles["card-textarea"]}
           disabled={!isEditing}
           value={editedTask.task}
           onChange={(e) => setEditedTask((prev: TodoType) => ({ ...prev, task: e.target.value }))}
           title={"task"}
-          style={{
-            textDecoration: task.completed ? "line-through" : "none",
-          }}
         />
         <span className={styles["card-id"]}># {task.id}</span>
         <div className={styles["card-footer"]}>
@@ -65,11 +63,16 @@ const CardActions = ({
   editedTask: TodoType;
   setEditedTask: (editedTask: TodoType) => void;
 }) => {
-  const { setReferences, references } = useReferencesStore();
+  const { references, setReferences } = useReferencesStore();
 
   const { mutate: editTodo } = useEditTodo();
   const { mutate: deleteTodo } = useDeleteTodo();
   const { mutate: completeTodo, isPending } = useCompleteTodo();
+
+  const handleReference = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    setReferences(task.id);
+  };
 
   const handleEdit = () => {
     if (task.completed) {
@@ -88,7 +91,7 @@ const CardActions = ({
 
   const handleCancel = () => {
     setIsEditing(false);
-    editTodo({ id: editedTask.id, task: editedTask.task });
+    setEditedTask(task);
   };
 
   const handleDelete = () => {
@@ -101,42 +104,33 @@ const CardActions = ({
     <div className={styles["card-buttons"]}>
       <div
         className={styles["reference-button"]}
-        onClick={(e) => {
-          e.stopPropagation();
-          setReferences(task.id);
-        }}
-        style={{
-          backgroundColor: references.includes(task.id)
-            ? "var(--light-orange)"
-            : "var(--light-gray)",
-        }}
+        data-reference={references.includes(task.id)}
+        onClick={handleReference}
       >
-        <span>REF</span>
+        <span>REF{references.includes(task.id) ? "" : "+"}</span>
       </div>
       <div className={styles["card-buttons-wrapper"]}>
         <button
-          aria-label="complete-button"
-          title="complete"
+          className={`${styles["card-button"]} ${styles["complete-button"]}`}
+          data-complete={task.completed}
+          data-complete-edit={isEditing}
           onClick={(e) => {
             e.stopPropagation();
             if (!isPending) completeTodo(task.id);
-          }}
-          style={{
-            backgroundColor: task.completed ? "var(--button)" : "var(--foreground)",
           }}
         >
           {task.completed ? "☓ Undo" : "✓ Complete"}
         </button>
         <button
-          aria-label={isEditing ? "save-button" : "edit-button"}
-          title={isEditing ? "save" : "edit"}
+          className={`${styles["card-button"]} ${styles["edit-button"]}`}
+          data-edit={!isEditing}
           onClick={handleEdit}
         >
           {isEditing ? "Save" : "Edit"}
         </button>
         <button
-          aria-label={isEditing ? "cancel-button" : "delete-button"}
-          title={isEditing ? "cancel" : "delete"}
+          className={`${styles["card-button"]} ${styles["delete-button"]}`}
+          data-delete={!isEditing}
           onClick={isEditing ? handleCancel : handleDelete}
         >
           {isEditing ? "Cancel" : "Delete"}
@@ -164,13 +158,7 @@ const Card = ({ task }: { task: TodoType }) => {
   }, [isEditing]);
 
   return (
-    <div
-      className={styles["card-container"]}
-      style={{
-        backgroundColor: task.completed ? "var(--light-surface)" : "var(--background)",
-        opacity: task.completed ? 0.7 : 1,
-      }}
-    >
+    <div className={styles["card-container"]} data-completed={task.completed}>
       <CardActions
         task={task}
         isEditing={isEditing}

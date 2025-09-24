@@ -20,28 +20,13 @@ export const useCompleteTodo = () => {
       const todoIdx = prev.pages[pageIdx].todos.findIndex((t) => t.id === id);
       if (todoIdx === -1) return { prev };
 
-      const allTodos = prev.pages.flatMap((p) => p.todos);
-      const current = prev.pages[pageIdx].todos[todoIdx];
-      const refs = current.references;
-
-      const refsCompleted =
-        refs.length === 0
-          ? true
-          : refs.every((refId) => {
-              const ref = allTodos.find((todo) => todo.id === refId);
-              return ref ? ref.completed : false;
-            });
-
-      const nextCompleted =
-        refs.length === 0 ? !current.completed : !current.completed && refsCompleted ? true : false;
-
       const newPages = prev.pages.map((page, i) =>
-        pageIdx !== i
+        i !== pageIdx
           ? page
           : {
               ...page,
               todos: page.todos.map((todo, j) =>
-                todoIdx === j ? { ...todo, completed: nextCompleted } : todo
+                j === todoIdx ? { ...todo, completed: !todo.completed } : todo
               ),
             }
       );

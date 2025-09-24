@@ -45,6 +45,8 @@
   - 다른 투두가 해당 투두를 참조 중이면 삭제 불가(서버 400 반환).
   - 클라이언트 사전 검사 및 알림: `useDeleteTodo.ts`
   - 서버 기준 로직: `handlers.ts`의 `DELETE /api/todos/:id`
+- 수정 정책:
+  - 해당 투두가 완료시에는 수정 불가
 - 페이지네이션:
   - 커서 기반 페이지네이션(`nextCursor`, `hasMore`) + 무한 스크롤.
   - 인터섹션 옵저버 훅: `src/shared/hooks/useIntersection.tsx`

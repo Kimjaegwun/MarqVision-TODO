@@ -40,9 +40,9 @@ export const useAddTodo = () => {
         });
       }
 
-      return { prev, tempId };
+      return { prev };
     },
-    onSuccess: (created, _vars, ctx) => {
+    onSuccess: (created) => {
       queryClient.setQueryData<InfiniteData<TodoListType>>(["todo", "list"], (prev) => {
         if (!prev) return prev;
 
@@ -50,9 +50,8 @@ export const useAddTodo = () => {
         const firstPage = pages[0];
 
         const firstPageTodos = firstPage.todos.slice();
-        const idx = firstPageTodos.findIndex((t) => t.id === ctx?.tempId) || 0;
 
-        firstPageTodos[idx] = created;
+        firstPageTodos[0] = created;
         pages[0] = { ...firstPage, todos: firstPageTodos };
 
         return { ...prev, pages };

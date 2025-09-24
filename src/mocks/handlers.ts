@@ -19,7 +19,6 @@ export const handlers = [
     });
 
     const start = cursor ? sorted.findIndex((t) => t.id === cursor) : 0;
-
     const items = sorted.slice(start, start + limit);
     const next = sorted[start + limit];
     const nextCursor = next ? next.id : null;
