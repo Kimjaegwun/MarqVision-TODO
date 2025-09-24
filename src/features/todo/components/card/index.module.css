@@ -1,8 +1,6 @@
 .card-container {
   display: flex;
-  width: 100%;
   gap: 4px;
-  display: flex;
   flex-direction: column;
   width: 100%;
   border: 1px solid var(--border);
@@ -87,28 +85,30 @@
 
     .complete-button {
       background-color: var(--foreground);
-      
+
       &[data-complete="true"] {
         background-color: var(--button);
-      }
-
-      &[data-complete-edit="true"] {
-        display: none;
       }
     }
 
     .edit-button {
       background-color: var(--light-blue);
-
-      &[data-edit="false"] {
-        background-color: var(--dark-green);
-      }
     }
 
     .delete-button {
       background-color: var(--light-red);
+    }
 
-      &[data-delete="false"] {
+    &[data-editing="true"] {
+      .complete-button {
+        display: none;
+      }
+
+      .edit-button {
+        background-color: var(--dark-green);
+      }
+
+      .delete-button {
         background-color: var(--light-gray);
       }
     }

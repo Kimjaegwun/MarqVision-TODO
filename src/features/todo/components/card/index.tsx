@@ -109,11 +109,10 @@ const CardActions = ({
       >
         <span>REF{references.includes(task.id) ? "" : "+"}</span>
       </div>
-      <div className={styles["card-buttons-wrapper"]}>
+      <div className={styles["card-buttons-wrapper"]} data-editing={isEditing}>
         <button
           className={`${styles["card-button"]} ${styles["complete-button"]}`}
           data-complete={task.completed}
-          data-complete-edit={isEditing}
           onClick={(e) => {
             e.stopPropagation();
             if (!isPending) completeTodo(task.id);
@@ -123,14 +122,12 @@ const CardActions = ({
         </button>
         <button
           className={`${styles["card-button"]} ${styles["edit-button"]}`}
-          data-edit={!isEditing}
           onClick={handleEdit}
         >
           {isEditing ? "Save" : "Edit"}
         </button>
         <button
           className={`${styles["card-button"]} ${styles["delete-button"]}`}
-          data-delete={!isEditing}
           onClick={isEditing ? handleCancel : handleDelete}
         >
           {isEditing ? "Cancel" : "Delete"}
