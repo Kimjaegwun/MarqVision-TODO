@@ -19,23 +19,24 @@
     border: none;
     outline: none;
     font-size: 16px;
-    background-color: transparent;
+    background-color: var(--surface);
     min-height: 26px;
     resize: none;
     margin-top: 8px;
     padding: 4px;
+    border-radius: 4px;
 
     &[data-completed="true"] {
       text-decoration: line-through;
     }
 
     &:focus {
-      border-radius: 5px;
-      background-color: var(--surface);
+      border-radius: 4px;
     }
 
     &:disabled {
       padding: 0;
+      background-color: transparent;
     }
   }
 

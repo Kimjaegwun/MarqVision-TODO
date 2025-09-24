@@ -30,6 +30,7 @@ const CardBody = forwardRef(
           value={editedTask.task}
           onChange={(e) => setEditedTask((prev: TodoType) => ({ ...prev, task: e.target.value }))}
           title={"task"}
+          placeholder="Add a task"
         />
         <span className={styles["card-id"]}># {task.id}</span>
         <div className={styles["card-footer"]}>
@@ -78,6 +79,11 @@ const CardActions = ({
   const handleEdit = () => {
     if (task.completed) {
       window.alert("Completed tasks cannot be edited");
+      return;
+    }
+
+    if (editedTask.task.trim() === "") {
+      window.alert("Task cannot be empty");
       return;
     }
 
