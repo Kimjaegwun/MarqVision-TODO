@@ -15,7 +15,7 @@ export const useAddTodo = () => {
       const prev = queryClient.getQueryData<InfiniteData<TodoListType>>(["todo", "list"]);
 
       const tempId = `temp-${Date.now()}`;
-      const optimistic: TodoType = {
+      const tempTodo: TodoType = {
         id: tempId,
         task,
         createdAt: new Date(),
@@ -26,7 +26,7 @@ export const useAddTodo = () => {
 
       if (prev) {
         const first = prev.pages[0];
-        const newFirst = { ...first, todos: [optimistic, ...first.todos] };
+        const newFirst = { ...first, todos: [tempTodo, ...first.todos] };
         const newPages = [newFirst, ...prev.pages.slice(1)];
 
         queryClient.setQueryData<InfiniteData<TodoListType>>(["todo", "list"], {
@@ -36,7 +36,7 @@ export const useAddTodo = () => {
       } else {
         queryClient.setQueryData<InfiniteData<TodoListType>>(["todo", "list"], {
           pageParams: [null],
-          pages: [{ todos: [optimistic], nextCursor: null, hasMore: false }],
+          pages: [{ todos: [tempTodo], nextCursor: null, hasMore: false }],
         });
       }
 
@@ -46,15 +46,12 @@ export const useAddTodo = () => {
       queryClient.setQueryData<InfiniteData<TodoListType>>(["todo", "list"], (prev) => {
         if (!prev) return prev;
 
-        const pages = prev.pages.slice();
-        const firstPage = pages[0];
+        const firstPage = prev.pages[0];
+        const firstPageTodos = [created, ...firstPage.todos.slice(1)];
 
-        const firstPageTodos = firstPage.todos.slice();
+        const newPages = [{ ...firstPage, todos: firstPageTodos }, ...prev.pages.slice(1)];
 
-        firstPageTodos[0] = created;
-        pages[0] = { ...firstPage, todos: firstPageTodos };
-
-        return { ...prev, pages };
+        return { ...prev, pages: newPages };
       });
     },
     onError: (_err, _var, ctx) => {

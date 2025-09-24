@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, memo, useEffect, useRef, useState } from "react";
 import styles from "./index.module.css";
 import { TodoType } from "@/types/todo";
 import { useReferencesStore } from "@/features/todo/store/references";
@@ -63,7 +63,8 @@ const CardActions = ({
   editedTask: TodoType;
   setEditedTask: (editedTask: TodoType) => void;
 }) => {
-  const { references, setReferences } = useReferencesStore();
+  const isReferenced = useReferencesStore((s) => s.references.includes(task.id));
+  const setReferences = useReferencesStore((s) => s.setReferences);
 
   const { mutate: editTodo } = useEditTodo();
   const { mutate: deleteTodo } = useDeleteTodo();
@@ -104,10 +105,10 @@ const CardActions = ({
     <div className={styles["card-buttons"]}>
       <div
         className={styles["reference-button"]}
-        data-reference={references.includes(task.id)}
+        data-reference={isReferenced}
         onClick={handleReference}
       >
-        <span>REF{references.includes(task.id) ? "" : "+"}</span>
+        <span>REF{isReferenced ? "" : "+"}</span>
       </div>
       <div className={styles["card-buttons-wrapper"]} data-editing={isEditing}>
         <button
@@ -174,4 +175,15 @@ const Card = ({ task }: { task: TodoType }) => {
   );
 };
 
-export default Card;
+const taskEqual = (prevProps: { task: TodoType }, nextProps: { task: TodoType }) => {
+  const prevTask = prevProps.task;
+  const nextTask = nextProps.task;
+
+  return (
+    prevTask.task === nextTask.task &&
+    prevTask.completed === nextTask.completed &&
+    prevTask.updatedAt === nextTask.updatedAt
+  );
+};
+
+export default memo(Card, taskEqual);
