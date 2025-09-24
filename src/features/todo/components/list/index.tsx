@@ -44,13 +44,13 @@ export default TodoList;
 const LoadingComponent = () => {
   return (
     <div className={styles["loading-container"]}>
-      {Array.from({ length: 10 }).map((_, index) => (
+      {Array.from({ length: 5 }).map((_, index) => (
         <div key={index} className={styles["loading-item"]}>
-          <Skeleton width="100%" height="136.5px" />
-          <div className={styles["loading-action"]}>
-            <Skeleton width="100%" height="66.25px" />
-            <Skeleton width="100%" height="66.25px" />
+          <div className={styles["loading-item-buttons"]}>
+            <Skeleton width="38px" height="20px" />
+            <Skeleton width="160px" height="20px" />
           </div>
+          <Skeleton width="100%" height="110px" />
         </div>
       ))}
     </div>
